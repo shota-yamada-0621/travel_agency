@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { removeAccessToken } from "../common/auth";
 import AppRoutes from "../routes";
@@ -17,10 +17,36 @@ const menuItems = [
   { path: "/inquiries", label: "問い合わせ管理", icon: "fas fa-envelope-open-text" },
 ];
 
+const LOGIN_USER_KEY = "loginUserName";
+
 const MainLayout = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    // 初回取得
+    setUserName(localStorage.getItem(LOGIN_USER_KEY) || "");
+    // storageイベントで他タブの変更も反映
+    const handleStorage = (e) => {
+      if (e.key === LOGIN_USER_KEY) {
+        setUserName(e.newValue || "");
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    // ポーリングでlocalStorageの変化を検知
+    const interval = setInterval(() => {
+      const name = localStorage.getItem(LOGIN_USER_KEY) || "";
+      setUserName((prev) => (prev !== name ? name : prev));
+    }, 500);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(interval);
+    };
+  }, []);
+
   const handleLogout = () => {
     removeAccessToken();
+    localStorage.removeItem(LOGIN_USER_KEY);
     navigate("/login", { replace: true });
   };
 
@@ -188,7 +214,7 @@ const MainLayout = () => {
               <span className="icon is-medium mr-2" style={{ color: "#0a7c6a" }}>
                 <i className="fas fa-user-circle"></i>
               </span>
-              <span className="mr-4 has-text-weight-semibold" style={{ color: "#0a7c6a" }}>山田 太郎</span>
+              <span className="mr-4 has-text-weight-semibold" style={{ color: "#0a7c6a" }}>{userName || "ゲスト"}</span>
               <button className="button is-danger is-rounded" onClick={handleLogout} style={{ fontWeight: 600 }}>
                 <span className="icon"><i className="fas fa-sign-out-alt"></i></span>
                 <span>ログアウト</span>

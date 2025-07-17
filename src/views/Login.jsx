@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { setAccessToken } from "../common/auth";
+
+const LOGIN_USER_KEY = "loginUserName";
 
 const Login = () => {
   const [username, setUsername] = useState("");
-  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (username.trim()) {
       setAccessToken();
-      navigate("/", { replace: true });
+      localStorage.setItem(LOGIN_USER_KEY, username);
+      window.location.replace("/");
     }
   };
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-      <div style={{ minHeight: "60vh", width: "50vw", display: "flex", justifyContent: "center", alignItems: "center", background: 'linear-gradient(135deg, #f8ffae 0%, #43c6ac 100%)', borderRadius: '2rem' }}>
+      <div style={{ minHeight: "60vh", width: "50vw", display: "flex", justifyContent: "center", alignItems: "center", background: 'linear-gradient(135deg, #f8ffae 0%, #43c6ac 100%)' }}>
         <div className="box has-text-centered" style={{ minWidth: 500, minHeight: 500, boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.2)', borderRadius: '2rem', background: 'rgba(255,255,255,0.95)' }}>
           <h1 className="title is-2 has-text-primary mb-5" style={{ fontWeight: 900, letterSpacing: '0.1em' }}>
             ログイン
