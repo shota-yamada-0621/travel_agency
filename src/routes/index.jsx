@@ -11,6 +11,7 @@ import Payments from "../views/payments/Payments";
 import Employees from "../views/employees/Employees";
 import Partners from "../views/partners/Partners";
 import Inquiries from "../views/inquiries/Inquiries";
+import InquiryDetail from "../views/inquiries/InquiryDetail";
 
 const AppRoutes = () => (
   <Routes>
@@ -24,7 +25,8 @@ const AppRoutes = () => (
     <Route path="/payments/*" element={<Payments />} />
     <Route path="/employees/*" element={<Employees />} />
     <Route path="/partners/*" element={<Partners />} />
-    <Route path="/inquiries/*" element={<Inquiries />} />
+    <Route path="/inquiries" element={<Inquiries />} />
+    <Route path="/inquiries/:id" element={<InquiryDetail />} />
   </Routes>
 );
 
