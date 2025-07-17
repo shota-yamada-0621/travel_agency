@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./views/Login";
-import MainLayout from "./app/MainLayout";
-import { getAccessToken } from "./utils/auth";
+import Login from "../views/Login";
+import MainLayout from "../components/MainLayout";
+import { getAccessToken } from "../common/auth";
 
 function RequireAuth({ children }) {
   const token = getAccessToken();

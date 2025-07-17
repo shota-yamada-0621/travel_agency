@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { removeAccessToken } from "../utils/auth";
+import { removeAccessToken } from "../common/auth";
+import AppRoutes from "../routes";
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const MainLayout = () => {
         </nav>
         <main className="p-5">
           {/* ここでAppRoutesを呼び出す */}
-          {require("../routes").default()}
+          <AppRoutes />
         </main>
       </div>
     </div>
