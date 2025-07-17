@@ -2,9 +2,15 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { dummyCustomers } from "./Customers";
 
+const LOCAL_KEY = "localCustomers";
+
 const CustomerDetail = () => {
   const { id } = useParams();
-  const customer = dummyCustomers.find((c) => c.id === Number(id));
+  let customer = dummyCustomers.find((c) => c.id === Number(id));
+  if (!customer) {
+    const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    customer = local.find((c) => c.id === Number(id));
+  }
 
   if (!customer) return <div>顧客が見つかりません</div>;
 

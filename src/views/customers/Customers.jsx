@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import CustomerCreate from "./CustomerCreate";
 import CustomerDetail from "./CustomerDetail";
@@ -28,36 +28,60 @@ export const dummyCustomers = [
   { id: 20, name: "森 十九", email: "juku@example.com" },
 ];
 
-const CustomerList = () => (
-  <div>
-    <h2 className="title is-4">顧客一覧</h2>
-    <Link to="create" className="button is-primary mb-4">新規顧客登録</Link>
-    <table className="table is-fullwidth is-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>名前</th>
-          <th>メールアドレス</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        {dummyCustomers.map((customer) => (
-          <tr key={customer.id}>
-            <td>{customer.id}</td>
-            <td>{customer.name}</td>
-            <td>{customer.email}</td>
-            <td>
-              <Link to={`${customer.id}`} className="button is-small is-info mr-2">詳細</Link>
-              <Link to={`${customer.id}/edit`} className="button is-small is-warning mr-2">編集</Link>
-              <Link to={`${customer.id}/delete`} className="button is-small is-danger">削除</Link>
-            </td>
+const LOCAL_KEY = "localCustomers";
+
+const CustomerList = () => {
+  const [localCustomers, setLocalCustomers] = useState([]);
+
+  useEffect(() => {
+    const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    setLocalCustomers(local);
+  }, []);
+
+  return (
+    <div>
+      <h2 className="title is-4">顧客一覧</h2>
+      <Link to="create" className="button is-primary mb-4">新規顧客登録</Link>
+      <table className="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名前</th>
+            <th>メールアドレス</th>
+            <th>操作</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+        </thead>
+        <tbody>
+          {dummyCustomers.map((customer) => (
+            <tr key={customer.id}>
+              <td>{customer.id}</td>
+              <td>{customer.name}</td>
+              <td>{customer.email}</td>
+              <td>
+                <Link to={`${customer.id}`} className="button is-small is-info mr-2">詳細</Link>
+                <Link to={`${customer.id}/edit`} className="button is-small is-warning mr-2">編集</Link>
+                <Link to={`${customer.id}/delete`} className="button is-small is-danger">削除</Link>
+              </td>
+            </tr>
+          ))}
+          {/* ローカルストレージの顧客データを下に追加表示 */}
+          {localCustomers.map((customer) => (
+            <tr key={customer.id} style={{ background: "#f6fff6" }}>
+              <td>{customer.id}</td>
+              <td>{customer.name}</td>
+              <td>{customer.email}</td>
+              <td>
+                <Link to={`${customer.id}`} className="button is-small is-info mr-2">詳細</Link>
+                <Link to={`${customer.id}/edit`} className="button is-small is-warning mr-2">編集</Link>
+                <Link to={`${customer.id}/delete`} className="button is-small is-danger">削除</Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 const Customers = () => {
   return (

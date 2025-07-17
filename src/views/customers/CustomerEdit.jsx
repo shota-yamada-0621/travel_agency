@@ -2,16 +2,29 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { dummyCustomers } from "./Customers";
 
+const LOCAL_KEY = "localCustomers";
+
 const CustomerEdit = () => {
   const { id } = useParams();
-  const customer = dummyCustomers.find((c) => c.id === Number(id));
+  let customer = dummyCustomers.find((c) => c.id === Number(id));
+  if (!customer) {
+    const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    customer = local.find((c) => c.id === Number(id));
+  }
   const [name, setName] = useState(customer?.name || "");
   const [email, setEmail] = useState(customer?.email || "");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ここでlocalStorage保存予定
+    // ローカルストレージのデータを更新
+    const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    const idx = local.findIndex((c) => c.id === Number(id));
+    if (idx !== -1) {
+      local[idx] = { ...local[idx], name, email };
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(local));
+    }
+    // dummyCustomersは編集しない
     navigate("../");
   };
 
