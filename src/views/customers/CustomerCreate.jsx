@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../components/SnackbarContext";
 
 const LOCAL_KEY = "localCustomers";
 
@@ -7,17 +8,15 @@ const CustomerCreate = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ローカルストレージから既存データ取得
     const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
-    // 新しいIDを決定
     const newId = local.length > 0 ? Math.max(...local.map(c => c.id)) + 1 : 1001;
-    // 新しい顧客データ
     const newCustomer = { id: newId, name, email };
-    // 保存
     localStorage.setItem(LOCAL_KEY, JSON.stringify([...local, newCustomer]));
+    showSnackbar("顧客を登録しました", "is-success");
     navigate("../");
   };
 
