@@ -19,21 +19,26 @@ const menuItems = [
 
 const LOGIN_USER_KEY = "loginUserName";
 
+const Sparkle = () => (
+  <div className="appbar-sparkle">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+);
+
 const MainLayout = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
+  const [appBarHover, setAppBarHover] = useState(false);
+  const [sidebarHover, setSidebarHover] = useState(Array(menuItems.length).fill(false));
 
   useEffect(() => {
-    // 初回取得
     setUserName(localStorage.getItem(LOGIN_USER_KEY) || "");
-    // storageイベントで他タブの変更も反映
     const handleStorage = (e) => {
       if (e.key === LOGIN_USER_KEY) {
         setUserName(e.newValue || "");
       }
     };
     window.addEventListener("storage", handleStorage);
-    // ポーリングでlocalStorageの変化を検知
     const interval = setInterval(() => {
       const name = localStorage.getItem(LOGIN_USER_KEY) || "";
       setUserName((prev) => (prev !== name ? name : prev));
@@ -112,6 +117,56 @@ const MainLayout = () => {
             opacity: 0;
           }
         }
+        .animated-appbar {
+          background: linear-gradient(90deg, #43c6ac, #f8ffae, #43c6ac, #f8ffae);
+          background-size: 300% 300%;
+          border-bottom-left-radius: 2rem;
+          border-bottom-right-radius: 2rem;
+          box-shadow: 0 4px 24px 0 rgba(67,198,172,0.10);
+          margin: 1.2rem 1.2rem 0 1.2rem;
+          padding: 0.5rem 2rem;
+          min-height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          position: relative;
+          overflow: hidden;
+        }
+        .animated-appbar.hover {
+          animation: appbar-glitter 5s linear infinite;
+          background: linear-gradient(90deg, #43c6ac, #f8ffae, #43c6ac, #f8ffae);
+          background-size: 300% 300%;
+        }
+        @keyframes appbar-glitter {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .appbar-sparkle {
+          position: absolute;
+          pointer-events: none;
+          top: 0; left: 0; width: 100%; height: 100%;
+          z-index: 0;
+        }
+        .appbar-sparkle span {
+          position: absolute;
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.7);
+          filter: blur(1.5px);
+          animation: sparkle-move 2.5s linear infinite;
+        }
+        .appbar-sparkle span:nth-child(1) { left: 10%; top: 30%; animation-delay: 0s; }
+        .appbar-sparkle span:nth-child(2) { left: 40%; top: 60%; animation-delay: 0.7s; }
+        .appbar-sparkle span:nth-child(3) { left: 70%; top: 20%; animation-delay: 1.2s; }
+        .appbar-sparkle span:nth-child(4) { left: 85%; top: 50%; animation-delay: 1.7s; }
+        .appbar-sparkle span:nth-child(5) { left: 55%; top: 10%; animation-delay: 2.1s; }
+        @keyframes sparkle-move {
+          0% { opacity: 0; transform: scale(0.7); }
+          10% { opacity: 1; transform: scale(1.2); }
+          90% { opacity: 1; transform: scale(1.2); }
+          100% { opacity: 0; transform: scale(0.7); }
+        }
       `}</style>
       <div className="columns" style={{ minHeight: "100vh" }}>
         {/* サイドバー */}
@@ -130,14 +185,17 @@ const MainLayout = () => {
           <div className="menu py-5" style={{ width: "100%" }}>
             <p className="menu-label has-text-weight-bold has-text-grey-dark is-size-5 mb-4" style={{ letterSpacing: "0.1em", textAlign: "center" }}>メニュー</p>
             <ul className="menu-list" style={{ width: "100%", padding: "0 0.5rem" }}>
-              {menuItems.map((item) => (
+              {menuItems.map((item, idx) => (
                 <li key={item.path} style={{ marginBottom: 10 }}>
                   <a
                     href={item.path}
                     className="sidebar-link is-flex is-align-items-center px-2 py-2"
-                    style={{ maxWidth: "92%", margin: "0 auto" }}
+                    style={{ maxWidth: "92%", margin: "0 auto", position: "relative" }}
                     onClick={handleRipple}
+                    onMouseEnter={() => setSidebarHover(h => h.map((v, i) => i === idx ? true : v))}
+                    onMouseLeave={() => setSidebarHover(h => h.map((v, i) => i === idx ? false : v))}
                   >
+                    {sidebarHover[idx] && <Sparkle />}
                     <span className="icon is-medium mr-3" style={{ fontSize: "1.4rem" }}>
                       <i className={item.icon}></i>
                     </span>
@@ -150,58 +208,12 @@ const MainLayout = () => {
         </aside>
         {/* メイン */}
         <div className="column is-10 p-0">
-          <style>{`
-            .animated-appbar {
-              background: linear-gradient(90deg, #43c6ac, #f8ffae, #43c6ac, #f8ffae);
-              background-size: 300% 300%;
-              animation: appbar-glitter 5s linear infinite;
-              border-bottom-left-radius: 2rem;
-              border-bottom-right-radius: 2rem;
-              box-shadow: 0 4px 24px 0 rgba(67,198,172,0.10);
-              margin: 1.2rem 1.2rem 0 1.2rem;
-              padding: 0.5rem 2rem;
-              min-height: 64px;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              position: relative;
-              overflow: hidden;
-            }
-            @keyframes appbar-glitter {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-            .appbar-sparkle {
-              position: absolute;
-              pointer-events: none;
-              top: 0; left: 0; width: 100%; height: 100%;
-              z-index: 0;
-            }
-            .appbar-sparkle span {
-              position: absolute;
-              width: 8px; height: 8px;
-              border-radius: 50%;
-              background: rgba(255,255,255,0.7);
-              filter: blur(1.5px);
-              animation: sparkle-move 2.5s linear infinite;
-            }
-            .appbar-sparkle span:nth-child(1) { left: 10%; top: 30%; animation-delay: 0s; }
-            .appbar-sparkle span:nth-child(2) { left: 40%; top: 60%; animation-delay: 0.7s; }
-            .appbar-sparkle span:nth-child(3) { left: 70%; top: 20%; animation-delay: 1.2s; }
-            .appbar-sparkle span:nth-child(4) { left: 85%; top: 50%; animation-delay: 1.7s; }
-            .appbar-sparkle span:nth-child(5) { left: 55%; top: 10%; animation-delay: 2.1s; }
-            @keyframes sparkle-move {
-              0% { opacity: 0; transform: scale(0.7); }
-              10% { opacity: 1; transform: scale(1.2); }
-              90% { opacity: 1; transform: scale(1.2); }
-              100% { opacity: 0; transform: scale(0.7); }
-            }
-          `}</style>
-          <nav className="navbar animated-appbar">
-            <div className="appbar-sparkle">
-              <span></span><span></span><span></span><span></span><span></span>
-            </div>
+          <nav
+            className={`navbar animated-appbar${appBarHover ? " hover" : ""}`}
+            onMouseEnter={() => setAppBarHover(true)}
+            onMouseLeave={() => setAppBarHover(false)}
+          >
+            {appBarHover && <Sparkle />}
             <div className="is-flex is-align-items-center">
               <span className="icon is-large mr-3" style={{ fontSize: "2rem", color: "#0a7c6a" }}>
                 <i className="fas fa-globe-asia"></i>
