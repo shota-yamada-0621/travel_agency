@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../views/Login";
 import MainLayout from "../components/MainLayout";
@@ -20,23 +20,22 @@ const BASIC_PASS = "password";
 const BasicAuthWrapper = ({ children }) => {
   const [authed, setAuthed] = useState(() => sessionStorage.getItem(BASIC_AUTH_KEY) === "1");
   const [error, setError] = useState("");
+  const promptedRef = useRef(false);
 
-  const handleAuth = () => {
-    const user = window.prompt("ユーザー名を入力してください", "");
-    const pass = window.prompt("パスワードを入力してください", "");
-    if (user === BASIC_USER && pass === BASIC_PASS) {
-      sessionStorage.setItem(BASIC_AUTH_KEY, "1");
-      setAuthed(true);
-      setError("");
-    } else {
-      setError("認証に失敗しました。ページを再読み込みして再試行してください。");
+  useEffect(() => {
+    if (!authed && !promptedRef.current) {
+      promptedRef.current = true;
+      const user = window.prompt("ユーザー名を入力してください", "");
+      const pass = window.prompt("パスワードを入力してください", "");
+      if (user === BASIC_USER && pass === BASIC_PASS) {
+        sessionStorage.setItem(BASIC_AUTH_KEY, "1");
+        setAuthed(true);
+        setError("");
+      } else {
+        setError("認証に失敗しました。ページを再読み込みして再試行してください。");
+      }
     }
-  };
-
-  React.useEffect(() => {
-    if (!authed) handleAuth();
-    // eslint-disable-next-line
-  }, []);
+  }, [authed]);
 
   if (!authed) {
     return (
