@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
-const dummyCustomers = [
-  { id: 1, name: "山田 太郎", email: "taro@example.com" },
-  { id: 2, name: "佐藤 花子", email: "hanako@example.com" },
-];
+import { dummyCustomers } from "./Customers";
 
 const CustomerEdit = () => {
   const { id } = useParams();
@@ -22,23 +18,34 @@ const CustomerEdit = () => {
   if (!customer) return <div>顧客が見つかりません</div>;
 
   return (
-    <div>
-      <h2 className="title is-4">顧客編集</h2>
-      <form onSubmit={handleSubmit} className="box" style={{ maxWidth: 400 }}>
-        <div className="field">
-          <label className="label">名前</label>
-          <div className="control">
-            <input className="input" value={name} onChange={e => setName(e.target.value)} required />
-          </div>
+    <div className="columns is-centered" style={{ minHeight: "80vh", alignItems: "center" }}>
+      <div className="column is-6-tablet is-5-desktop is-4-widescreen">
+        <div className="box" style={{ borderRadius: "1.5rem", boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)" }}>
+          <h2 className="title is-3 has-text-primary has-text-centered mb-5">顧客編集</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="field mb-5">
+              <label className="label is-large">名前</label>
+              <div className="control has-icons-left">
+                <input className="input is-large is-rounded" value={name} onChange={e => setName(e.target.value)} required placeholder="顧客名を入力" />
+                <span className="icon is-left"><i className="fas fa-user"></i></span>
+              </div>
+            </div>
+            <div className="field mb-6">
+              <label className="label is-large">メールアドレス</label>
+              <div className="control has-icons-left">
+                <input className="input is-large is-rounded" type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="メールアドレスを入力" />
+                <span className="icon is-left"><i className="fas fa-envelope"></i></span>
+              </div>
+            </div>
+            <div className="has-text-centered">
+              <button className="button is-primary is-large is-rounded has-text-weight-bold px-6" type="submit">
+                <span className="icon"><i className="fas fa-save"></i></span>
+                <span>保存</span>
+              </button>
+            </div>
+          </form>
         </div>
-        <div className="field">
-          <label className="label">メールアドレス</label>
-          <div className="control">
-            <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </div>
-        </div>
-        <button className="button is-primary" type="submit">保存</button>
-      </form>
+      </div>
     </div>
   );
 };

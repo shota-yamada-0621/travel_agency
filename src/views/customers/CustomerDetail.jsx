@@ -1,10 +1,6 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-
-const dummyCustomers = [
-  { id: 1, name: "山田 太郎", email: "taro@example.com" },
-  { id: 2, name: "佐藤 花子", email: "hanako@example.com" },
-];
+import { dummyCustomers } from "./Customers";
 
 const CustomerDetail = () => {
   const { id } = useParams();
