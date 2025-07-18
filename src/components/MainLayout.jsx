@@ -219,7 +219,7 @@ const MainLayout = () => {
                 <i className="fas fa-globe-asia"></i>
               </span>
               <span className="has-text-weight-bold is-size-4" style={{ letterSpacing: "0.08em", color: "#0a7c6a" }}>
-                旅行会社管理システム
+                TRAVEL AGENCY
               </span>
             </div>
             <div className="is-flex is-align-items-center">

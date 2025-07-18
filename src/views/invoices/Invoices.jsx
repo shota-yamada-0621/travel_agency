@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import InvoiceCreate from "./InvoiceCreate";
 import InvoiceDetail from "./InvoiceDetail";
-import InvoiceEdit from "./InvoiceEdit";
 import InvoiceDelete from "./InvoiceDelete";
 import { getPartnersData } from "../partners/Partners";
 
@@ -41,14 +40,35 @@ export const generateDummyInvoices = () => {
 export const dummyInvoices = generateDummyInvoices();
 
 const LOCAL_KEY = "localInvoices";
+const DUMMY_INVOICES_KEY = "dummyInvoices";
 
 const InvoiceList = () => {
   const [localInvoices, setLocalInvoices] = useState([]);
+  const [dummyInvoicesState, setDummyInvoicesState] = useState([]);
 
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
     setLocalInvoices(local);
+    
+    // テストデータの状態をlocalStorageから取得、なければ初期化
+    const savedDummyInvoices = localStorage.getItem(DUMMY_INVOICES_KEY);
+    if (savedDummyInvoices) {
+      setDummyInvoicesState(JSON.parse(savedDummyInvoices));
+    } else {
+      const initialDummyInvoices = generateDummyInvoices();
+      localStorage.setItem(DUMMY_INVOICES_KEY, JSON.stringify(initialDummyInvoices));
+      setDummyInvoicesState(initialDummyInvoices);
+    }
   }, []);
+
+  // テストデータのステータス変更を反映するための関数
+  const updateDummyInvoiceStatus = (id, newStatus) => {
+    const updatedDummyInvoices = dummyInvoicesState.map(inv => 
+      inv.id === id ? { ...inv, status: newStatus } : inv
+    );
+    setDummyInvoicesState(updatedDummyInvoices);
+    localStorage.setItem(DUMMY_INVOICES_KEY, JSON.stringify(updatedDummyInvoices));
+  };
 
   const statusTag = (status) => {
     if (status === "支払い済") return <span className="tag is-success-light has-text-success is-medium">{status}</span>;
@@ -77,7 +97,7 @@ const InvoiceList = () => {
           </tr>
         </thead>
         <tbody>
-          {dummyInvoices.map((inv) => (
+          {dummyInvoicesState.map((inv) => (
             <tr key={inv.id}>
               <td>{inv.id}</td>
               <td><strong>{inv.number}</strong></td>
@@ -96,7 +116,6 @@ const InvoiceList = () => {
               <td>{statusTag(inv.status)}</td>
               <td>
                 <Link to={`${inv.id}`} className="button is-small is-info mr-2">詳細</Link>
-                <Link to={`${inv.id}/edit`} className="button is-small is-warning mr-2">編集</Link>
                 <Link to={`${inv.id}/delete`} className="button is-small is-danger">削除</Link>
               </td>
             </tr>
@@ -120,7 +139,6 @@ const InvoiceList = () => {
               <td>{statusTag(inv.status)}</td>
               <td>
                 <Link to={`${inv.id}`} className="button is-small is-info mr-2">詳細</Link>
-                <Link to={`${inv.id}/edit`} className="button is-small is-warning mr-2">編集</Link>
                 <Link to={`${inv.id}/delete`} className="button is-small is-danger">削除</Link>
               </td>
             </tr>
@@ -137,7 +155,6 @@ const Invoices = () => {
       <Route index element={<InvoiceList />} />
       <Route path="create" element={<InvoiceCreate />} />
       <Route path=":id" element={<InvoiceDetail />} />
-      <Route path=":id/edit" element={<InvoiceEdit />} />
       <Route path=":id/delete" element={<InvoiceDelete />} />
     </Routes>
   );
