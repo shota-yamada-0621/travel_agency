@@ -51,7 +51,7 @@ src
 +-- utils             # shared utility functions
 ```
 
-### 3. 開発ルール
+### 2. 開発ルール
 
 masterに反映させるときversion管理したいが、tagを付けるのがめんどくさいのでgit flowで開発します。
 
