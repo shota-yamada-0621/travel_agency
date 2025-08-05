@@ -4,6 +4,8 @@ import CustomerCreate from "./CustomerCreate";
 import CustomerDetail from "./CustomerDetail";
 import CustomerEdit from "./CustomerEdit";
 import CustomerDelete from "./CustomerDelete";
+// CsvExportButtonコンポーネントをインポート
+import CsvExportButton from "../../components/CsvExportButton";
 
 export const dummyCustomers = [
   { id: 1, name: "山田 太郎", email: "taro@example.com" },
@@ -32,16 +34,40 @@ const LOCAL_KEY = "localCustomers";
 
 const CustomerList = () => {
   const [localCustomers, setLocalCustomers] = useState([]);
+  const [allCustomers, setAllCustomers] = useState([]);
 
   useEffect(() => {
     const local = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
     setLocalCustomers(local);
+    // ダミー顧客とローカルストレージの顧客を結合
+    setAllCustomers([...dummyCustomers, ...local]);
   }, []);
+
+  // CSVのヘッダーを定義
+  const csvHeaders = [
+    { label: "ID", key: "id" },
+    { label: "名前", key: "name" },
+    { label: "メールアドレス", key: "email" },
+  ];
 
   return (
     <div>
       <h2 className="title is-4">顧客一覧</h2>
-      <Link to="create" className="button is-primary mb-4">新規顧客登録</Link>
+      <div className="field is-grouped mb-4">
+        <p className="control">
+          <Link to="create" className="button is-primary">新規顧客登録</Link>
+        </p>
+        <p className="control">
+          {/* CSV出力ボタンを設置 */}
+          <CsvExportButton
+            data={allCustomers}
+            headers={csvHeaders}
+            filename="customers.csv"
+            buttonText="顧客データCSV出力"
+            className="button is-link"
+          />
+        </p>
+      </div>
       <table className="table is-fullwidth is-striped">
         <thead>
           <tr>
@@ -95,4 +121,4 @@ const Customers = () => {
   );
 };
 
-export default Customers; 
+export default Customers;
